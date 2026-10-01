@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0d12">
+  <title>Chess with KMNorva | Train. Think. Dominate.</title>
+  <style>
+
+
+:root{
+  --bg:#080a0f; --panel:#10131a; --panel2:#151922; --text:#f1f3f7;
+  --muted:#9ba2b1; --line:#2b303b; --accent:#d7ff3f; --accent2:#9bbd16;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 70%);z-index:-2}
+.ambient{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(100px);opacity:.12;pointer-events:none;z-index:-1}
+.ambient-one{background:#b7ff00;top:-200px;right:-180px}.ambient-two{background:#5e2cff;bottom:-250px;left:-200px}
+a{color:inherit;text-decoration:none}.nav{height:78px;display:flex;align-items:center;justify-content:space-between;padding:0 6vw;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(8,10,15,.82);backdrop-filter:blur(18px);z-index:20}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:-.03em;font-size:1.05rem}.brand-mark{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--accent);color:var(--accent);font-size:20px}.brand span span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:32px;font-family:'DM Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}.nav-links a{color:#c9ced8}.nav-links a:hover{color:var(--accent)}.nav-cta{border:1px solid var(--accent)!important;padding:11px 16px;color:var(--accent)!important}.menu-btn{display:none;background:none;border:0;color:white;font-size:25px}
+.hero{min-height:calc(100vh - 78px);display:grid;grid-template-columns:1.05fr .95fr;align-items:center;padding:70px 8vw 90px;gap:6vw;position:relative}
+.eyebrow{font:500 .68rem 'DM Mono',monospace;letter-spacing:.16em;color:#aeb4c0;display:flex;align-items:center;gap:10px}.eyebrow span{display:block;width:26px;height:1px;background:var(--accent)}
+h1{font-size:clamp(4.4rem,9vw,9rem);line-height:.82;letter-spacing:-.075em;margin:25px 0 30px;font-weight:700}h1 em,h2 em,blockquote em{font-style:normal;color:var(--accent)}
+.hero-text{max-width:530px;color:var(--muted);font-size:1.05rem;line-height:1.7}.hero-actions{display:flex;gap:12px;margin-top:34px}.btn{display:inline-flex;align-items:center;justify-content:space-between;gap:25px;padding:15px 19px;font:500 .72rem 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;border:1px solid var(--line);cursor:pointer}.btn-primary{background:var(--accent);border-color:var(--accent);color:#090b0d}.btn-primary:hover{background:#efffa8}.btn-ghost{color:#fff}.btn-ghost:hover{border-color:#727987}.mini-stats{display:flex;gap:30px;margin-top:60px}.mini-stats div{display:flex;gap:10px;align-items:flex-start}.mini-stats strong{font:500 .7rem 'DM Mono';color:var(--accent)}.mini-stats span{font:500 .68rem 'DM Mono';color:#8d94a2;text-transform:uppercase;line-height:1.4}
+.hero-board-wrap{position:relative;display:grid;place-items:center}.board-glow{position:absolute;width:85%;height:85%;background:var(--accent);filter:blur(100px);opacity:.08}.chess-board{width:min(560px,78vw);aspect-ratio:1;position:relative;transform:perspective(1000px) rotateX(4deg) rotateZ(-1.5deg);box-shadow:0 35px 80px rgba(0,0,0,.6);background:repeating-conic-gradient(#171b23 0 25%,#2c323d 0 50%) 50%/25% 25%;border:1px solid #4a505c}.chess-board:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(215,255,63,.1),transparent 45%,rgba(110,77,255,.12))}
+.piece{position:absolute;font-family:Georgia,serif;color:#e8ebf0;text-shadow:3px 5px 0 #07080a,0 0 24px rgba(215,255,63,.25);font-size:clamp(50px,8vw,90px);z-index:2}.p1{left:11%;bottom:10%}.p2{right:12%;top:8%;color:var(--accent)}.p3{left:36%;top:24%}.p4{right:34%;bottom:21%;font-size:clamp(35px,5vw,60px)}.p5{right:6%;bottom:9%;font-size:clamp(40px,6vw,68px)}.p6{left:8%;top:12%;font-size:clamp(32px,5vw,55px)}.p7{left:52%;bottom:5%;font-size:clamp(45px,7vw,80px);color:#b9c0cc}
+.board-label{font:500 .62rem 'DM Mono';letter-spacing:.2em;position:absolute;top:-32px;right:0;color:#737a88}.board-caption{display:flex;gap:12px;align-items:center;margin-top:22px;font:500 .62rem 'DM Mono';letter-spacing:.15em;color:#707785}.board-caption i{width:4px;height:4px;background:var(--accent);border-radius:50%}
+.ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:15px 0;display:flex;justify-content:space-around;overflow:hidden;white-space:nowrap;color:#6f7683;font:500 .63rem 'DM Mono';letter-spacing:.14em}.ticker b{color:var(--accent)}
+.section{padding:130px 10vw}.about{display:grid;grid-template-columns:.18fr .8fr 1fr;gap:5vw;border-bottom:1px solid var(--line)}.section-number{font:500 .7rem 'DM Mono';color:var(--accent)}h2{font-size:clamp(3rem,6vw,6rem);line-height:.9;letter-spacing:-.06em;margin-top:24px}.about-text{align-self:end;color:var(--muted);font-size:1rem;line-height:1.8}.about-text p+p{margin-top:22px}
+.training{padding:120px 8vw}.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:55px}.section-head>p{max-width:280px;color:var(--muted);line-height:1.6}.training-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}.training-card{background:var(--bg);padding:42px;min-height:330px;position:relative;transition:.3s}.training-card:hover{background:#11151d}.training-card.featured{background:#151a12}.card-icon{font-size:35px;color:var(--accent);margin-bottom:50px}.training-card span{font:500 .62rem 'DM Mono';letter-spacing:.12em;color:#858c99}.training-card h3{font-size:2rem;line-height:1;letter-spacing:-.04em;margin:15px 0}.training-card p{color:var(--muted);max-width:360px;line-height:1.6}.card-line{position:absolute;left:42px;bottom:30px;width:40px;height:2px;background:var(--accent)}
+.levels{padding:130px 10vw;display:grid;grid-template-columns:.75fr 1.25fr;gap:10vw;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.level-intro p{color:var(--muted);line-height:1.7;max-width:400px;margin-top:28px}.level-list{border-top:1px solid var(--line)}.level-row{display:grid;grid-template-columns:45px 1fr 30px;gap:20px;align-items:center;padding:26px 0;border-bottom:1px solid var(--line);transition:.25s}.level-row:hover{padding-left:12px;background:rgba(215,255,63,.025)}.level-row>span{font:500 .65rem 'DM Mono';color:var(--accent)}.level-row h3{font-size:1.35rem}.level-row p{color:#7e8694;font-size:.86rem;margin-top:5px;line-height:1.5}.level-row>b{color:var(--accent)}
+.quote-section{text-align:center;padding:150px 5vw}.quote-mark{font:100px Georgia;color:var(--accent);height:60px}.quote-section blockquote{font-size:clamp(2.2rem,5vw,5rem);line-height:1;letter-spacing:-.06em}.quote-line{height:1px;background:var(--line);width:100px;margin:35px auto 18px}.quote-section p{font:500 .6rem 'DM Mono';letter-spacing:.18em;color:#747b89}
+.booking{display:grid;grid-template-columns:.85fr 1.15fr;gap:8vw;padding:120px 10vw;background:#0d1016;border-top:1px solid var(--line)}.booking-side h2{margin-bottom:28px}.booking-side>p{color:var(--muted);line-height:1.7;max-width:410px}.contact-box{margin-top:45px;border-top:1px solid var(--line)}.contact-box div{padding:16px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px}.contact-box span{font:500 .6rem 'DM Mono';color:#737a87}.contact-box a{font-size:.85rem}.contact-box a:hover{color:var(--accent)}
+.booking-form{background:#151922;border:1px solid var(--line);padding:35px;box-shadow:0 30px 70px rgba(0,0,0,.3)}label{display:block;font:500 .62rem 'DM Mono';letter-spacing:.08em;color:#a8afbb;text-transform:uppercase;margin-bottom:18px}input,select,textarea{display:block;width:100%;margin-top:9px;background:#0c0f14;border:1px solid #303641;color:#fff;padding:14px;font:400 .9rem 'Space Grotesk';outline:none}input:focus,select:focus,textarea:focus{border-color:var(--accent)}textarea{resize:vertical}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:15px}.submit{width:100%;margin-top:5px}.booking-form small{display:block;color:#666e7c;line-height:1.5;margin-top:14px;font-size:.68rem}
+footer{padding:35px 8vw;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);font-size:.78rem;color:#747b88}.footer-brand{color:#e7eaf0}.footer-brand span{color:var(--accent);font-size:22px;margin-right:8px}footer a:hover{color:var(--accent)}
+@media(max-width:850px){.nav{padding:0 5vw}.menu-btn{display:block}.nav-links{display:none;position:absolute;top:78px;left:0;right:0;background:#0a0c11;border-bottom:1px solid var(--line);padding:22px 5vw;flex-direction:column;align-items:flex-start}.nav-links.open{display:flex}.hero{grid-template-columns:1fr;padding:75px 7vw}.hero-board-wrap{margin-top:40px}.about,.levels,.booking{grid-template-columns:1fr;padding:90px 7vw}.section-number{display:none}.training{padding:90px 7vw}.section-head{display:block}.section-head>p{margin-top:25px}.training-grid{grid-template-columns:1fr}.quote-section{padding:100px 7vw}.mini-stats{margin-top:45px}.booking{gap:55px}}
+@media(max-width:520px){h1{font-size:4rem}.hero-actions{flex-direction:column}.btn{width:100%}.mini-stats{gap:17px}.mini-stats span{font-size:.58rem}.training-card{padding:30px;min-height:300px}.form-row{grid-template-columns:1fr}.booking-form{padding:24px}.contact-box div{display:block}.contact-box a{display:block;margin-top:7px}footer{flex-direction:column;gap:15px;text-align:center}}
+
+</style>
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="nav">
+    <a class="brand" href="#top">
+      <span class="brand-mark">♞</span>
+      <span>KM<span>Norva</span> Chess</span>
+    </a>
+    <button class="menu-btn" aria-label="Open menu">☰</button>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#training">Training</a>
+      <a href="#levels">Levels</a>
+      <a href="#booking" class="nav-cta">Book a Lesson</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span></span> PRIVATE CHESS COACHING</div>
+        <h1>Think<br><em>three moves</em><br>ahead.</h1>
+        <p class="hero-text">Build sharper calculation, stronger strategy and real confidence over the board with personalized chess coaching.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#booking">Start Training <b>→</b></a>
+          <a class="btn btn-ghost" href="#training">Explore Coaching</a>
+        </div>
+        <div class="mini-stats">
+          <div><strong>01</strong><span>Personal<br>training</span></div>
+          <div><strong>02</strong><span>Practical<br>games</span></div>
+          <div><strong>03</strong><span>Clear<br>feedback</span></div>
+        </div>
+      </div>
+
+      <div class="hero-board-wrap" aria-label="Decorative chess board">
+        <div class="board-glow"></div>
+        <div class="board-label top">KMNORVA / CHESS</div>
+        <div class="chess-board">
+          <div class="rank-file file-a">A</div><div class="rank-file file-h">H</div>
+          <div class="rank-file rank-1">1</div><div class="rank-file rank-8">8</div>
+          <div class="piece p1">♚</div><div class="piece p2">♛</div><div class="piece p3">♞</div>
+          <div class="piece p4">♟</div><div class="piece p5">♜</div><div class="piece p6">♟</div>
+          <div class="piece p7">♗</div>
+        </div>
+        <div class="board-caption">
+          <span>CALCULATE</span><i></i><span>CREATE</span><i></i><span>CONQUER</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="ticker">
+      <span>CHESS IS MORE THAN MOVES</span><b>✦</b><span>IT'S DECISION MAKING</span><b>✦</b><span>PLAY WITH PURPOSE</span><b>✦</b><span>BUILD YOUR GAME</span>
+    </section>
+
+    <section class="section about" id="about">
+      <div class="section-number">01</div>
+      <div class="section-title">
+        <div class="eyebrow"><span></span> THE GAME</div>
+        <h2>Every move<br>has a <em>reason.</em></h2>
+      </div>
+      <div class="about-text">
+        <p>Chess is a strategic board game where two players compete to checkmate the opponent's king. But strong chess is not simply about knowing moves — it is about recognizing patterns, calculating consequences and making decisions under pressure.</p>
+        <p>KMNorva Chess turns those ideas into practical training designed around the player's current level and goals.</p>
+      </div>
+    </section>
+
+    <section class="training" id="training">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span></span> WHAT WE TRAIN</div>
+          <h2>Upgrade your<br><em>whole game.</em></h2>
+        </div>
+        <p>Focused lessons. Practical positions. No unnecessary complexity.</p>
+      </div>
+
+      <div class="training-grid">
+        <article class="training-card featured">
+          <div class="card-icon">♞</div>
+          <span>01 / CALCULATION</span>
+          <h3>See the board<br>before it happens.</h3>
+          <p>Learn candidate moves, tactical patterns and disciplined calculation.</p>
+          <div class="card-line"></div>
+        </article>
+        <article class="training-card">
+          <div class="card-icon">♜</div>
+          <span>02 / STRATEGY</span>
+          <h3>Turn positions<br>into plans.</h3>
+          <p>Understand space, pawn structures, weak squares and piece activity.</p>
+          <div class="card-line"></div>
+        </article>
+        <article class="training-card">
+          <div class="card-icon">♝</div>
+          <span>03 / TACTICS</span>
+          <h3>Spot the<br>opportunity.</h3>
+          <p>Build pattern recognition through practical attacking and defensive positions.</p>
+          <div class="card-line"></div>
+        </article>
+        <article class="training-card">
+          <div class="card-icon">♔</div>
+          <span>04 / ENDGAMES</span>
+          <h3>Finish what<br>you start.</h3>
+          <p>Learn essential king, pawn and piece endgames with clear decision rules.</p>
+          <div class="card-line"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="levels" id="levels">
+      <div class="section-number">02</div>
+      <div class="level-intro">
+        <div class="eyebrow"><span></span> FIND YOUR LEVEL</div>
+        <h2>From first move<br>to <em>serious play.</em></h2>
+        <p>Your lesson is adapted to where you are now — not where a textbook says you should be.</p>
+      </div>
+      <div class="level-list">
+        <div class="level-row"><span>01</span><div><h3>Beginner</h3><p>Rules, piece movement, checkmates, opening principles and confidence.</p></div><b>→</b></div>
+        <div class="level-row"><span>02</span><div><h3>Intermediate</h3><p>Tactics, calculation, positional plans, openings and game analysis.</p></div><b>→</b></div>
+        <div class="level-row"><span>03</span><div><h3>Advanced</h3><p>Deeper calculation, strategic decisions, preparation and difficult positions.</p></div><b>→</b></div>
+        <div class="level-row"><span>04</span><div><h3>Personalized</h3><p>Bring your own games and we focus directly on the patterns holding you back.</p></div><b>→</b></div>
+      </div>
+    </section>
+
+    <section class="quote-section">
+      <div class="quote-mark">“</div>
+      <blockquote>Don't just memorize the move.<br><em>Understand why it works.</em></blockquote>
+      <div class="quote-line"></div>
+      <p>KMNORVA CHESS / TRAINING PHILOSOPHY</p>
+    </section>
+
+    <section class="booking" id="booking">
+      <div class="booking-side">
+        <div class="eyebrow"><span></span> BOOK A SESSION</div>
+        <h2>Make your<br><em>next move.</em></h2>
+        <p>Choose your preferred lesson details. Your request will open WhatsApp with the information already prepared.</p>
+        <div class="contact-box">
+          <div><span>WHATSAPP</span><a href="https://wa.me/260965660014">+260 965 660 014</a></div>
+          <div><span>PHONE</span><a href="tel:+260963268558">+260 963 268 558</a></div>
+          <div><span>EMAIL</span><a href="mailto:kanyantam47@gmail.com">kanyantam47@gmail.com</a></div>
+        </div>
+      </div>
+
+      <form id="bookingForm" class="booking-form">
+        <label>Your name<input id="name" type="text" placeholder="Enter your name" required></label>
+        <div class="form-row">
+          <label>Level
+            <select id="level" required>
+              <option value="">Select level</option>
+              <option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Personalized</option>
+            </select>
+          </label>
+          <label>Lesson type
+            <select id="lesson" required>
+              <option value="">Select type</option>
+              <option>Private lesson</option><option>Game analysis</option><option>Tactical training</option><option>Opening training</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Date<input id="date" type="date" required></label>
+          <label>Preferred time<input id="time" type="time" required></label>
+        </div>
+        <label>Anything you'd like to work on?<textarea id="message" rows="4" placeholder="e.g. tactics, openings, recent games..."></textarea></label>
+        <button class="btn btn-primary submit" type="submit">Request Lesson <b>↗</b></button>
+        <small>Your request is sent for confirmation. No payment is taken by this form.</small>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><span>♞</span> Chess with KMNorva</div>
+    <p>Train. Think. Dominate.</p>
+    <a href="#top">Back to top ↑</a>
+  </footer>
+
+  <script>
+const menuBtn = document.querySelector('.menu-btn');
+const navLinks = document.querySelector('.nav-links');
+menuBtn?.addEventListener('click', () => navLinks.classList.toggle('open'));
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+const dateInput = document.getElementById('date');
+if (dateInput) {
+  const today = new Date();
+  dateInput.min = new Date(today.getTime() - today.getTimezoneOffset()*60000).toISOString().split('T')[0];
+}
+
+document.getElementById('bookingForm')?.addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('name').value.trim();
+  const level = document.getElementById('level').value;
+  const lesson = document.getElementById('lesson').value;
+  const date = document.getElementById('date').value;
+  const time = document.getElementById('time').value;
+  const message = document.getElementById('message').value.trim() || 'No additional notes.';
+  if(!name || !level || !lesson || !date || !time) return;
+  const text =
+`♟ CHESS WITH KMNORVA — LESSON REQUEST
+
+Name: ${name}
+Level: ${level}
+Lesson: ${lesson}
+Date: ${date}
+Time: ${time}
+Notes: ${message}
+
+I'd like to request a chess coaching session.`;
+  window.open('https://wa.me/260965660014?text=' + encodeURIComponent(text), '_blank');
+});
+
+</script>
+</body>
+</html>
